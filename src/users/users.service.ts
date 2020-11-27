@@ -48,8 +48,17 @@ export class UsersService {
     return this.userRepository.find()
   }
 
-  findOne(id: number): Promise<User> {
-    return this.userRepository.findOne(id)
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOne(id)
+
+    if (user) {
+      return user
+    } else {
+      throw new HttpException(
+        "Can't found user with specified id",
+        HttpStatus.NOT_FOUND,
+      )
+    }
   }
 
   async remove(id: number): Promise<void> {

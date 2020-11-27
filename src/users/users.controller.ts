@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  ParseIntPipe,
   Post,
   UsePipes,
   ValidationPipe,
@@ -26,5 +28,14 @@ export class UsersController {
   @Get()
   public getAll() {
     return this.usersService.findAll()
+  }
+
+  @Get(':id')
+  @UsePipes()
+  public findOne(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.usersService.findOne(id)
   }
 }

@@ -1,0 +1,10 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5433,
+  "username": "postgres",
+  "password": "postgres",
+  "database": "studying_nest",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "synchronize": true
+}

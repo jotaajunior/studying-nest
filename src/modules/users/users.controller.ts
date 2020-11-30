@@ -7,20 +7,24 @@ import {
   ParseIntPipe,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
+import { UserRo } from './ro/user.ro'
 
 @Controller('users')
+@ApiTags('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post()
-  @UsePipes(new ValidationPipe())
+  @ApiOkResponse({
+    description: 'The User has been successfully created',
+    type: UserRo,
+  })
   public create(
     @Body()
     createUserDto: CreateUserDto,
@@ -29,11 +33,21 @@ export class UsersController {
   }
 
   @Get()
+  @ApiOkResponse({
+    description: 'Return all the Users',
+    isArray: true,
+    type: UserRo,
+  })
   public getAll() {
     return this.usersService.findAll()
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    description: 'Return the User with the specified id',
+    isArray: true,
+    type: UserRo,
+  })
   public findOne(
     @Param('id', ParseIntPipe)
     id: number,
@@ -42,7 +56,10 @@ export class UsersController {
   }
 
   @Put(':id')
-  @UsePipes(new ValidationPipe())
+  @ApiOkResponse({
+    description: 'The User has been successfully updated',
+    type: UserRo,
+  })
   public update(
     @Param('id', ParseIntPipe)
     id: number,
@@ -54,6 +71,10 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiOkResponse({
+    description: 'The User has been successfully removed',
+    type: UserRo,
+  })
   public remove(
     @Param('id', ParseIntPipe)
     id: number,

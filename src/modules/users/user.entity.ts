@@ -5,12 +5,12 @@ export class User {
   @PrimaryGeneratedColumn()
   public id: number
 
-  @Column()
+  @Column({ unique: true })
   public username: string
 
   @Column({ select: false })
   public password: string
 
-  @Column()
+  @Column({ unique: true })
   public email: string
 }

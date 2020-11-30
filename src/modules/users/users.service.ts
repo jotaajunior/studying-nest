@@ -133,13 +133,10 @@ export class UsersService {
       }
     }
 
-    await this.userRepository.update(user.id, user)
-
-    return {
-      id,
-      username: user.username,
-      email: user.email,
-    }
+    return this.userRepository.save({
+      ...user,
+      ...userData,
+    })
   }
 
   /**

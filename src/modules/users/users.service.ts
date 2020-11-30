@@ -16,6 +16,25 @@ export class UsersService {
   ) {}
 
   /**
+   * Find an User by e-mail or username
+   *
+   * @param uid E-mail or username
+   */
+  public async findByUid(uid: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: [
+        {
+          email: uid,
+        },
+        {
+          username: uid,
+        },
+      ],
+      select: ['id', 'username', 'email', 'password'],
+    })
+  }
+
+  /**
    * Check if the value already exists for the column
    *
    * @param columnName The column

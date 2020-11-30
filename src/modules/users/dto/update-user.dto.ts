@@ -1,23 +1,5 @@
-import {
-  IsEmail,
-  IsOptional,
-  IsString,
-  Length,
-  MinLength,
-} from 'class-validator'
+import { PartialType } from '@nestjs/mapped-types'
 
-export class UpdateUserDto {
-  @IsEmail()
-  @IsOptional()
-  public email: string
+import { CreateUserDto } from './create-user.dto'
 
-  @IsString()
-  @Length(4, 16)
-  @IsOptional()
-  public username: string
-
-  @IsString()
-  @MinLength(6)
-  @IsOptional()
-  public password: string
-}
+export class UpdateUserDto extends PartialType(CreateUserDto) {}

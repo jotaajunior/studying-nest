@@ -4,9 +4,9 @@ import { ILike, Repository } from 'typeorm'
 import * as argon from 'argon2'
 
 import { User } from './user.entity'
-import { CreateUserDto } from './dto/create-user.dto'
+import { CreateUserDTO } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { UserRo } from './ro/user.ro'
+import { UserRO } from './ro/user.ro'
 
 @Injectable()
 export class UsersService {
@@ -67,7 +67,7 @@ export class UsersService {
    *
    * @param userData The user data
    */
-  public async create(userData: CreateUserDto): Promise<UserRo> {
+  public async create(userData: CreateUserDTO): Promise<UserRO> {
     const { email, username, password } = userData
 
     const isEmailUnique = await this.isUnique('email', email)
@@ -98,7 +98,7 @@ export class UsersService {
   /**
    * Return all the Users
    */
-  public findAll(): Promise<UserRo[]> {
+  public findAll(): Promise<UserRO[]> {
     return this.userRepository.find()
   }
 
@@ -107,7 +107,7 @@ export class UsersService {
    *
    * @param id The id
    */
-  public async findOne(id: number): Promise<UserRo> {
+  public async findOne(id: number): Promise<UserRO> {
     const user = await this.userRepository.findOne(id)
 
     if (user) {
@@ -126,7 +126,7 @@ export class UsersService {
    * @param id The id
    * @param userData The user data
    */
-  public async update(id: number, userData: UpdateUserDto): Promise<UserRo> {
+  public async update(id: number, userData: UpdateUserDto): Promise<UserRO> {
     const user = (await this.findOne(id)) as User
 
     if (userData.password) {
@@ -163,7 +163,7 @@ export class UsersService {
    *
    * @param id The id
    */
-  public async remove(id: number): Promise<UserRo> {
+  public async remove(id: number): Promise<UserRO> {
     const user = await this.findOne(id)
 
     await this.userRepository.delete(id)

@@ -11,9 +11,9 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { UsersService } from './users.service'
-import { CreateUserDto } from './dto/create-user.dto'
+import { CreateUserDTO } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { UserRo } from './ro/user.ro'
+import { UserRO } from './ro/user.ro'
 
 @Controller('users')
 @ApiTags('users')
@@ -23,20 +23,20 @@ export class UsersController {
   @Post()
   @ApiOkResponse({
     description: 'The User has been successfully created',
-    type: UserRo,
+    type: UserRO,
   })
   public create(
     @Body()
-    createUserDto: CreateUserDto,
+    CreateUserDTO: CreateUserDTO,
   ) {
-    return this.usersService.create(createUserDto)
+    return this.usersService.create(CreateUserDTO)
   }
 
   @Get()
   @ApiOkResponse({
     description: 'Return all the Users',
     isArray: true,
-    type: UserRo,
+    type: UserRO,
   })
   public getAll() {
     return this.usersService.findAll()
@@ -46,7 +46,7 @@ export class UsersController {
   @ApiOkResponse({
     description: 'Return the User with the specified id',
     isArray: true,
-    type: UserRo,
+    type: UserRO,
   })
   public findOne(
     @Param('id', ParseIntPipe)
@@ -58,7 +58,7 @@ export class UsersController {
   @Put(':id')
   @ApiOkResponse({
     description: 'The User has been successfully updated',
-    type: UserRo,
+    type: UserRO,
   })
   public update(
     @Param('id', ParseIntPipe)
@@ -73,7 +73,7 @@ export class UsersController {
   @Delete(':id')
   @ApiOkResponse({
     description: 'The User has been successfully removed',
-    type: UserRo,
+    type: UserRO,
   })
   public remove(
     @Param('id', ParseIntPipe)

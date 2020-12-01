@@ -1,11 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as argon2 from 'argon2'
 
 import { UsersService } from '../users/users.service'
-import { LoginDTO } from './dto/login.dto'
-import { User } from '../users/user.entity'
-import { AuthRO } from './ro/auth.ro'
+import { UserRO } from '../users/ro/user.ro'
+import { DecodedToken } from './interfaces/DecodedToken'
 
 @Injectable()
 export class AuthService {
@@ -20,26 +24,32 @@ export class AuthService {
    * @param uid E-mail or username
    * @param password The password
    */
-  private async verifyCredentials(
+  public async verifyCredentials(
     uid: string,
     password: string,
-  ): Promise<User | false> {
-    const user = await this.usersService.findByUid(uid)
+  ): Promise<UserRO> {
+    const {
+      password: hashedPassword,
+      ...user
+    } = await this.usersService.findByUid(uid)
 
     if (user) {
-      const isCorrect = await argon2.verify(user.password, password)
-      return isCorrect ? user : false
+      const isCorrect = await argon2.verify(hashedPassword, password)
+
+      if (isCorrect) {
+        return user
+      }
     } else {
-      return false
+      throw new UnauthorizedException()
     }
   }
 
   /**
    * Generates the JWT for User
    */
-  private async generateJwt(user: User) {
-    const payload = {
-      id: user.id,
+  public async login(user: UserRO) {
+    const payload: DecodedToken = {
+      userId: user.id,
     }
 
     return {
@@ -48,19 +58,16 @@ export class AuthService {
   }
 
   /**
-   * Attempts to authenticate the user
+   * Decodes the token
    *
-   * @param loginData The login data
-   * @param loginData.uid E-mail or username
-   * @param loginData.password The password
+   * @param token The token
    */
-  public async authenticate({ uid, password }: LoginDTO): Promise<AuthRO> {
-    const user = await this.verifyCredentials(uid, password)
-
-    if (user) {
-      return this.generateJwt(user)
-    } else {
-      throw new HttpException('Invalid Credentials', HttpStatus.FORBIDDEN)
+  public verifyToken(token: string): DecodedToken {
+    try {
+      const decodedToken = this.jwtService.verify(token)
+      return decodedToken
+    } catch (error) {
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED)
     }
   }
 }

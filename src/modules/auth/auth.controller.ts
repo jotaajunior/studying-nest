@@ -1,8 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { UserRO } from '../users/ro/user.ro'
 
 import { AuthService } from './auth.service'
-import { LoginDTO } from './dto/login.dto'
+import { JwtAuthGuard } from './jwt-auth.guard'
+import { LocalAuthGuard } from './local-auth.guard'
 import { AuthRO } from './ro/auth.ro'
 
 @Controller('auth')
@@ -15,10 +17,14 @@ export class AuthController {
     description: 'Token has been successfully generated',
     type: AuthRO,
   })
-  public async authenticate(
-    @Body()
-    loginData: LoginDTO,
-  ): Promise<AuthRO> {
-    return this.authService.authenticate(loginData)
+  @UseGuards(LocalAuthGuard)
+  public async authenticate(@Request() req: any): Promise<AuthRO> {
+    return this.authService.login(req.user)
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  public getMe(@Request() req): UserRO {
+    return req.user
   }
 }
